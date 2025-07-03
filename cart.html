@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cart</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f2f2f2;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    .cart-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    .cart-item {
+      background: #fff;
+      border-radius: 10px;
+      display: flex;
+      gap: 15px;
+      padding: 15px;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .cart-item img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    .cart-details {
+      flex: 1;
+    }
+
+    .cart-details h3 {
+      margin: 0;
+    }
+
+    .price {
+      color: #0073e6;
+      margin: 5px 0;
+    }
+
+    .quantity-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .quantity-box input {
+      width: 60px;
+      padding: 6px;
+      text-align: center;
+    }
+
+    .remove-btn {
+      background: red;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .total {
+      text-align: right;
+      font-size: 20px;
+      margin-top: 20px;
+    }
+
+    .checkout {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 30px;
+      font-size: 16px;
+      background-color: green;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .cart-item img {
+        width: 80px;
+      }
+
+      .total {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Your Cart</h2>
+  <div class="cart-container" id="cart-list"></div>
+
+  <div class="total" id="cart-total">Total: ₹0</div>
+  <button class="checkout" onclick="checkout()">Place Order</button>
+
+  <script>
+    // CART DATA
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    // RENDER FUNCTION
+    function renderCart() {
+      const list = document.getElementById("cart-list");
+      list.innerHTML = "";
+      let total = 0;
+
+      cart.forEach((item, index) => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+
+        list.innerHTML += `
+          <div class="cart-item">
+            <img src="${item.image}" alt="${item.name}" />
+            <div class="cart-details">
+              <h3>${item.name}</h3>
+              <div class="price">₹${item.price} x ${item.quantity} = ₹${itemTotal}</div>
+              <div class="quantity-box">
+                <label>Qty:</label>
+                <input type="number" min="1" value="${item.quantity}" onchange="updateQuantity(${index}, this.value)" />
+                <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      document.getElementById("cart-total").innerText = `Total: ₹${total}`;
+    }
+
+    function updateQuantity(index, value) {
+      cart[index].quantity = parseInt(value);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCart();
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCart();
+    }
+
+    function checkout() {
+      if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+      }
+
+      const orders = JSON.parse(localStorage.getItem("orders")) || [];
+      orders.push(...cart);
+      localStorage.setItem("orders", JSON.stringify(orders));
+      localStorage.removeItem("cart");
+      alert("Order placed successfully!");
+      location.reload();
+    }
+
+    renderCart();
+    localStorage.setItem("cart", JSON.stringify([
+  {
+    name: "iPhone 15 Pro",
+    price: 129999,
+    quantity: 1,
+    image: "https://m.media-amazon.com/images/I/81SigpJN1KL._SX679_.jpg"
+  },
+  {
+    name: "Sony WH-1000XM5",
+    price: 29999,
+    quantity: 2,
+    image: "https://m.media-amazon.com/images/I/61RJJ+V2uNL._SL1500_.jpg"
+  },
+  {
+    name: "Wireless Mouse",
+    price: 499,
+    quantity: 1,
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Wireless_Mouse.jpg/320px-Wireless_Mouse.jpg"
+  },
+  {
+    name: "USB Keyboard",
+    price: 999,
+    quantity: 1,
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Computer_keyboard.jpg/320px-Computer_keyboard.jpg"
+  }
+]));
+
+  </script>
+
+</body>
+</html>

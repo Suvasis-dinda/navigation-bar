@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Orders - Amazon</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f6f6f6;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .order-container {
+      max-width: 1000px;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .order-card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .order-header {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .order-body {
+      display: flex;
+      gap: 15px;
+      align-items: flex-start;
+    }
+
+    .order-body img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      border: 1px solid #eee;
+      border-radius: 6px;
+      background: #fff;
+    }
+
+    .order-info {
+      flex: 1;
+    }
+
+    .order-info h3 {
+      margin: 0 0 5px 0;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .order-info p {
+      margin: 4px 0;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .delivered {
+      color: green;
+      font-weight: bold;
+    }
+
+    @media (max-width: 600px) {
+      .order-body {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .order-body img {
+        width: 80px;
+      }
+
+      .order-info {
+        text-align: center;
+      }
+
+      .order-header {
+        flex-direction: column;
+        gap: 5px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Your Orders</h2>
+  <div class="order-container" id="orders"></div>
+
+  <script>
+    // Sample order data (run in browser console first if needed)
+    const orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+    const container = document.getElementById("orders");
+
+    if (orders.length === 0) {
+      container.innerHTML = "<p style='text-align:center;'>You have no orders yet.</p>";
+    } else {
+      orders.forEach(order => {
+        container.innerHTML += `
+          <div class="order-card">
+            <div class="order-header">
+              <div><strong>Ordered on:</strong> ${new Date().toLocaleDateString()}</div>
+              <div><strong>Order Total:</strong> ₹${order.price * order.quantity}</div>
+            </div>
+            <div class="order-body">
+              <img src="${order.image}" alt="${order.name}">
+              <div class="order-info">
+                <h3>${order.name}</h3>
+                <p>Quantity: ${order.quantity}</p>
+                <p>Price: ₹${order.price}</p>
+                <p class="delivered">Delivered on: ${new Date().toLocaleDateString()}</p>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+    
+    localStorage.setItem("orders", JSON.stringify([
+  {
+    name: "Samsung Galaxy S23 Ultra",
+    price: 124999,
+    quantity: 1,
+    image: "https://m.media-amazon.com/images/I/61VfL-aiToL._SX679_.jpg"
+  },
+  {
+    name: "Sony WH-1000XM5 Headphones",
+    price: 29999,
+    quantity: 1,
+    image: "https://m.media-amazon.com/images/I/61RJJ+V2uNL._SL1500_.jpg"
+  },
+  {
+    name: "Dell XPS 15 Laptop",
+    price: 189999,
+    quantity: 1,
+    image: "https://m.media-amazon.com/images/I/71T4JfFX1kL._SL1500_.jpg"
+  }
+]));
+
+  </script>
+
+</body>
+</html>
